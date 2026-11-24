@@ -1,35 +1,37 @@
 # 🤖 Local Project Debugging Agent
 
-> A fully **offline** AI-powered debugging assistant that runs on your Mac — no API keys, no internet, no cost.
+> A fully **offline** AI-powered debugging assistant — no API keys, no internet, no cost.  
+> Works on **Windows, macOS and Linux**.
 
-It scans your entire project, understands the code, and answers any question about it using a local LLM (via [Ollama](https://ollama.com)).
+Point it at any project folder, ask a question in plain English, and it gives you the root cause, the exact file, and a code fix — all powered by a local LLM running on your own machine.
 
 ---
 
 ## 📸 How It Looks
 
 ```
-╭─────────────────────────────────────────────────────╮
-│         Local Project Debugging Agent               │
-│   No API tokens. Runs fully on your Mac.            │
-╰─────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────╮
+│              Local Project Debugging Agent               │
+│  No API tokens. Runs fully offline on Windows,           │
+│  macOS and Linux.                                        │
+╰──────────────────────────────────────────────────────────╯
 
-Enter your project path (or press Enter for current dir): /Users/you/myproject
+Enter your project path (or press Enter for current dir): /home/user/myproject
 
-Scanning project: /Users/you/myproject
+Scanning project: /home/user/myproject
 Found 42 files
 
 Your query: why is my login view returning 403?
 
 Thinking...
 
-╭─────────────────── Agent Response ──────────────────╮
-│                                                     │
-│  Root Cause: CSRF token missing in your AJAX call   │
-│  File: templates/login.html, views.py line 34       │
-│  Fix: Add {% csrf_token %} inside your <form> tag   │
-│                                                     │
-╰─────────────────────────────────────────────────────╯
+╭──────────────────────── Agent Response ─────────────────────────╮
+│                                                                  │
+│  Root Cause: CSRF token missing in your AJAX POST request        │
+│  File: templates/login.html, views.py line 34                    │
+│  Fix: Add {% csrf_token %} inside your <form> tag                │
+│                                                                  │
+╰──────────────────────────────────────────────────────────────────╯
 ```
 
 ---
@@ -37,12 +39,13 @@ Thinking...
 ## ✨ Features
 
 - 🔍 **Smart project scanner** — reads `.py`, `.html`, `.js`, `.css`, `.json`, `.sql` and more
-- 🧠 **Query-aware context** — ranks files by relevance to your question
+- 🧠 **Query-aware context** — ranks files by relevance to your question automatically
 - ⚡ **Priority files first** — always reads `models.py`, `views.py`, `settings.py`, `urls.py` first
-- 🌿 **Git-aware** — shows uncommitted changes as part of context
-- 🎨 **Rich terminal UI** — colored output with panels and markdown rendering
-- 🔒 **100% offline** — uses [Ollama](https://ollama.com) + `qwen2.5-coder:7b` locally
-- 💸 **Zero cost** — no OpenAI, no Anthropic, no API bills
+- 🌿 **Git-aware** — includes uncommitted changes as part of the context
+- 🎨 **Rich terminal UI** — colored panels and markdown rendering in the terminal
+- 🔒 **100% offline** — uses [Ollama](https://ollama.com) + `qwen2.5-coder:7b` running locally
+- 💸 **Zero cost** — no OpenAI, no Anthropic, no subscriptions
+- 🖥️ **Cross-platform** — works on Windows, macOS and Linux
 
 ---
 
@@ -52,36 +55,43 @@ Thinking...
 |------|---------|
 | Python 3 | Core language |
 | [Ollama](https://ollama.com) | Local LLM runtime |
-| `qwen2.5-coder:7b` | AI model (code-specialized) |
-| [Rich](https://github.com/Textualize/rich) | Beautiful terminal output |
+| `qwen2.5-coder:7b` | AI model specialized for code |
+| [Rich](https://github.com/Textualize/rich) | Terminal UI with colors and panels |
 
 ---
 
 ## 🚀 Quick Start
 
-### Step 1 — Run Setup (one time only)
+### Step 1 — Install Ollama
 
+| OS | Instructions |
+|----|-------------|
+| **Windows** | Download from [ollama.com/download/windows](https://ollama.com/download/windows) and run the installer |
+| **macOS** | Download from [ollama.com/download/mac](https://ollama.com/download/mac) or run `brew install ollama` |
+| **Linux** | Run `curl -fsSL https://ollama.com/install.sh \| sh` |
+
+### Step 2 — Run Setup
+
+**macOS / Linux:**
 ```bash
-cd agent
 chmod +x setup.sh
 ./setup.sh
 ```
 
-This will:
-- Install Ollama if not already installed
-- Start the Ollama server
-- Pull the `llama3.2` model (~2GB, one-time download)
-
-### Step 2 — Install Python dependencies
-
-```bash
-pip install ollama rich
+**Windows:**
+```bat
+setup.bat
 ```
 
-### Step 3 — Run the agent
+This will:
+- Pull the `qwen2.5-coder:7b` model (~4GB, one-time download)
+- Install Python dependencies (`ollama`, `rich`)
+
+### Step 3 — Run the Agent
 
 ```bash
-python3 agent.py
+python3 agent.py        # macOS / Linux
+python agent.py         # Windows
 ```
 
 ---
@@ -89,7 +99,7 @@ python3 agent.py
 ## 💬 Usage
 
 ```
-Enter your project path (or press Enter for current dir): /Users/you/myproject
+Enter your project path (or press Enter for current dir): /home/user/myproject
 
 Your query: why is my celery task not running?
 Your query: explain what the InvestorProfile model does
@@ -98,7 +108,7 @@ Your query: how does the login flow work?
 Your query: exit
 ```
 
-Type **exit** or **quit** to stop.
+Type `exit` or `quit` to stop.
 
 ---
 
@@ -106,8 +116,11 @@ Type **exit** or **quit** to stop.
 
 ```
 agent/
-├── agent.py       # Main agent — scans project, builds context, queries LLM
-└── setup.sh       # One-time setup script for Ollama + model
+├── agent.py        # Main agent — scans project, builds context, queries LLM
+├── setup.sh        # One-time setup for macOS / Linux
+├── setup.bat       # One-time setup for Windows
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -119,14 +132,14 @@ Your Query
     │
     ▼
 Scan Project Files
-(skips venv, node_modules, migrations etc.)
+(skips venv, node_modules, migrations, __pycache__ etc.)
     │
     ▼
-Rank Files by Relevance to Query
+Rank Files by Relevance to Your Query
 (priority: settings.py, models.py, views.py, urls.py)
     │
     ▼
-Build Context (max 60,000 chars)
+Build Context (max 60,000 characters)
     │
     ▼
 Send to Local LLM (qwen2.5-coder:7b via Ollama)
@@ -134,7 +147,7 @@ Send to Local LLM (qwen2.5-coder:7b via Ollama)
     ▼
 Get Answer with:
   - Root cause
-  - File + line reference
+  - Exact file + code area
   - Step-by-step fix
   - Code snippet
 ```
@@ -143,28 +156,47 @@ Get Answer with:
 
 ## 🔧 Configuration
 
-You can edit these constants at the top of `agent.py`:
+Edit these constants at the top of `agent.py` to customize behaviour:
 
 | Constant | Default | Description |
 |----------|---------|-------------|
 | `MODEL` | `qwen2.5-coder:7b` | Ollama model to use |
-| `MAX_FILE_SIZE_KB` | `50` | Skip files larger than this |
-| `SUPPORTED_EXTENSIONS` | `.py .html .js ...` | File types to scan |
-| `SKIP_DIRS` | `venv, node_modules ...` | Directories to ignore |
-| `PRIORITY_FILES` | `models.py, views.py ...` | Always read these first |
+| `MAX_FILE_SIZE_KB` | `50` | Skip files larger than this size |
+| `SUPPORTED_EXTENSIONS` | `.py .html .js .css ...` | File types to include in scan |
+| `SKIP_DIRS` | `venv, node_modules, migrations ...` | Directories to skip |
+| `PRIORITY_FILES` | `models.py, views.py, settings.py ...` | Always read these files first |
+
+You can swap the model to any Ollama-supported model:
+
+```python
+MODEL = "llama3.2"          # Faster, lighter
+MODEL = "qwen2.5-coder:7b"  # Better for code (default)
+MODEL = "codellama"         # Alternative code model
+```
 
 ---
 
 ## 📦 Requirements
 
-- macOS (Apple Silicon or Intel)
 - Python 3.8+
-- [Ollama](https://ollama.com) installed
-- ~4GB RAM free for the model
+- [Ollama](https://ollama.com) installed and running
+- ~4GB free disk space for the model
+- ~4GB RAM minimum (8GB recommended)
 
 ```bash
 pip install ollama rich
 ```
+
+---
+
+## 🖥️ Platform Support
+
+| Platform | Supported | Setup |
+|----------|-----------|-------|
+| Windows 10/11 | ✅ | `setup.bat` |
+| macOS (Intel & Apple Silicon) | ✅ | `setup.sh` |
+| Ubuntu / Debian Linux | ✅ | `setup.sh` |
+| Other Linux distros | ✅ | `setup.sh` |
 
 ---
 

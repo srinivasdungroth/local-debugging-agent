@@ -153,7 +153,7 @@ def setup_check():
 
 
 def main():
-    console.print(Panel("[bold]Local Project Debugging Agent[/bold]\nNo API tokens. Runs fully on your Mac.", border_style="cyan"))
+    console.print(Panel("[bold]Local Project Debugging Agent[/bold]\nNo API tokens. Runs fully offline on Windows, macOS and Linux.", border_style="cyan"))
 
     project_path = input("\nEnter your project path (or press Enter for current dir): ").strip()
     if not project_path:
